@@ -53,24 +53,34 @@ export default function ContactDetailPage() {
   const handleSummarizeContext = async () => {
     if (isLoading || !currentContact) return;
     setIsLoading(true);
-    const prompt = `Summarize the following customer context in one or two short sentences for a sales agent: "${currentContact.notes}"`;
-    const summary = await callGeminiAPI(prompt);
-    setSummarizedContext(summary);
-    updateContactData(currentContact.id, { summarizedContext: summary });
-    setIsLoading(false);
+    try {
+      const prompt = `Summarize the following customer context in one or two short sentences for a sales agent: "${currentContact.notes}"`;
+      const summary = await callGeminiAPI(prompt);
+      setSummarizedContext(summary);
+      updateContactData(currentContact.id, { summarizedContext: summary });
+    } catch (err) {
+      console.error("Gemini summarization failed", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSuggestScript = async () => {
     if (isLoading || !currentContact) return;
     setIsLoading(true);
-    let prompt = `Based on the following customer context: "${currentContact.notes}" and their status: "${currentContact.status}", suggest a brief and polite pre-call script for a sales agent.`;
-    if (scriptTemplates && scriptTemplates.trim() !== "") {
-      prompt += `\n\nPlease also consider these general script templates and guidelines when crafting the script: "${scriptTemplates}"`;
+    try {
+      let prompt = `Based on the following customer context: "${currentContact.notes}" and their status: "${currentContact.status}", suggest a brief and polite pre-call script for a sales agent.`;
+      if (scriptTemplates && scriptTemplates.trim() !== "") {
+        prompt += `\n\nPlease also consider these general script templates and guidelines when crafting the script: "${scriptTemplates}"`;
+      }
+      const script = await callGeminiAPI(prompt);
+      setSuggestedScript(script);
+      updateContactData(currentContact.id, { suggestedScript: script });
+    } catch (err) {
+      console.error("Gemini script suggestion failed", err);
+    } finally {
+      setIsLoading(false);
     }
-    const script = await callGeminiAPI(prompt);
-    setSuggestedScript(script);
-    updateContactData(currentContact.id, { suggestedScript: script });
-    setIsLoading(false);
   };
 
   if (!currentContact) {

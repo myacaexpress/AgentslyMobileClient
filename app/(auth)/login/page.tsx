@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link'; // For linking to sign-up page
 
 export default function LoginPage() {
-  const { signIn, loading, error } = useAuth();
+  const { signIn, loading, error, user: authUser } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,8 +29,6 @@ export default function LoginPage() {
     }
   };
   
-  // Redirect if user is already logged in (AuthContext's user state)
-  const { user: authUser } = useAuth();
   React.useEffect(() => {
     if (authUser) {
       router.push('/'); // Redirect to home if already logged in

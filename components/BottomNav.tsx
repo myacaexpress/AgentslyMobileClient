@@ -30,7 +30,7 @@ export default function BottomNav() {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-10 flex justify-around p-2 border-t bg-white max-w-md mx-auto">
+    <nav className="fixed bottom-0 left-0 right-0 z-10 flex justify-around p-2 nav-enhanced max-w-md mx-auto">
       {navItems.map(item => {
         const isActive = pathname === item.screenPath;
         const Icon = item.icon;
@@ -38,11 +38,11 @@ export default function BottomNav() {
           <Button
             key={item.name}
             variant="ghost"
-            className={`flex flex-col items-center h-auto p-2 rounded-md ${isActive ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:bg-gray-100'}`}
+            className={`flex flex-col items-center h-auto p-2 rounded-md btn-enhanced ${isActive ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:bg-gray-100'}`}
             onClick={() => navigateTo(item.screenPath)}
           >
             <Icon className={`w-6 h-6 mb-1 ${isActive ? 'text-indigo-600' : 'text-gray-500'}`} />
-            <span className={`text-xs ${isActive ? 'font-semibold' : ''}`}>{item.name}</span>
+            <span className={`text-xs text-readable ${isActive ? 'font-semibold' : ''}`}>{item.name}</span>
           </Button>
         );
       })}

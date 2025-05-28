@@ -29,10 +29,6 @@ export default function FollowUpListPage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-80px)]"> {/* Adjusted height for bottom nav */}
-      <header className="flex justify-between items-center p-4 border-b bg-white sticky top-0 z-10">
-        <h1 className="text-xl font-bold text-slate-800">Follow Up</h1>
-      </header>
-      
       <Tabs value={activeTab} onValueChange={setActiveTab} className="p-4 flex flex-col flex-grow">
         <TabsList className="grid w-full grid-cols-4 mb-4 shrink-0">
           <TabsTrigger value="Recent" onClick={() => setActiveTab('Recent')}>Recent</TabsTrigger>

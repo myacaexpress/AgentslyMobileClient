@@ -3,6 +3,13 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --text-shadow-light: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --text-shadow-medium: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --text-shadow-strong: 0 2px 4px rgba(0, 0, 0, 0.5);
+  --overlay-light: rgba(255, 255, 255, 0.9);
+  --overlay-dark: rgba(0, 0, 0, 0.7);
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(255, 255, 255, 0.2);
 }
 
 @theme inline {
@@ -16,6 +23,10 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --glass-bg: rgba(0, 0, 0, 0.95);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --overlay-light: rgba(0, 0, 0, 0.9);
+    --overlay-dark: rgba(255, 255, 255, 0.7);
   }
 }
 
@@ -23,4 +34,179 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Enhanced text readability classes */
+.text-readable {
+  text-shadow: var(--text-shadow-light);
+}
+
+.text-readable-medium {
+  text-shadow: var(--text-shadow-medium);
+}
+
+.text-readable-strong {
+  text-shadow: var(--text-shadow-strong);
+}
+
+.text-contrast-high {
+  color: #000000;
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.8), 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.text-contrast-high-dark {
+  color: #ffffff;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8), 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* Glass morphism effect for better readability */
+.glass-bg {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-bg-light {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-bg-dark {
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced overlay for text over images/backgrounds */
+.text-overlay {
+  position: relative;
+}
+
+.text-overlay::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -8px;
+  right: -8px;
+  bottom: -4px;
+  background: var(--overlay-light);
+  border-radius: 8px;
+  z-index: -1;
+}
+
+.text-overlay-dark::before {
+  background: var(--overlay-dark);
+}
+
+/* Enhanced button styles for better contrast */
+.btn-enhanced {
+  position: relative;
+  overflow: hidden;
+  text-shadow: var(--text-shadow-light);
+}
+
+.btn-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  z-index: 0;
+}
+
+.btn-enhanced > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Enhanced chat message styles */
+.chat-message-user {
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  color: white;
+  text-shadow: var(--text-shadow-medium);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.chat-message-ai {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  color: var(--foreground);
+  text-shadow: var(--text-shadow-light);
+}
+
+/* Enhanced header styles */
+.header-enhanced {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--glass-border);
+  text-shadow: var(--text-shadow-light);
+}
+
+/* Enhanced navigation styles */
+.nav-enhanced {
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-top: 1px solid var(--glass-border);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced input styles */
+.input-enhanced {
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  text-shadow: var(--text-shadow-light);
+}
+
+.input-enhanced::placeholder {
+  color: rgba(107, 114, 128, 0.8);
+  text-shadow: none;
+}
+
+/* Enhanced card styles */
+.card-enhanced {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .glass-bg,
+  .glass-bg-light,
+  .glass-bg-dark {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .text-readable,
+  .text-readable-medium,
+  .text-readable-strong {
+    text-shadow: none;
+  }
+  
+  .glass-bg,
+  .glass-bg-light,
+  .glass-bg-dark {
+    background: var(--background);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 2px solid var(--foreground);
+  }
 }

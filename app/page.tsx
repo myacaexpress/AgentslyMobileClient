@@ -217,10 +217,10 @@ export default function AskPage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-80px)] p-4"> {/* Adjusted height for bottom nav */}
-      <header className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold text-slate-800">AGENTSLY.AI</h1>
+      <header className="flex justify-between items-center mb-4 header-enhanced rounded-lg p-3">
+        <h1 className="text-xl font-bold text-slate-800 text-readable-medium">AGENTSLY.AI</h1>
         <Avatar>
-          <AvatarFallback className="bg-slate-200 text-slate-700">{mockUser.initials}</AvatarFallback>
+          <AvatarFallback className="bg-slate-200 text-slate-700 text-readable">{mockUser.initials}</AvatarFallback>
         </Avatar>
       </header>
 
@@ -248,7 +248,7 @@ export default function AskPage() {
           }
           return (
             <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-xs lg:max-w-md p-3 rounded-lg ${msg.sender === 'user' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800'}`}>
+              <div className={`max-w-xs lg:max-w-md p-3 rounded-lg ${msg.sender === 'user' ? 'chat-message-user' : 'chat-message-ai'}`}>
                 {msg.uploadStatus && <p className="text-xs text-gray-600 mb-1">{msg.uploadStatus}</p>}
                 {msg.image && <img src={msg.image} alt="uploaded content" className="rounded-md mb-2 max-h-40" />}
                 <p className="whitespace-pre-wrap">{msg.text}</p>
@@ -320,13 +320,13 @@ export default function AskPage() {
         <Input 
             type="text" 
             placeholder={attachedImage ? "Image attached. Type message..." : "Ask anything..."}
-            className="flex-grow" 
+            className="flex-grow input-enhanced" 
             value={inputMessage} 
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputMessage(e.target.value)}
             onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && handleSend()}
             disabled={isLoading}
         />
-        <Button size="icon" onClick={handleSend} className="bg-indigo-600 hover:bg-indigo-700" disabled={isLoading || (!inputMessage.trim() && !attachedImage) }>
+        <Button size="icon" onClick={handleSend} className="bg-indigo-600 hover:bg-indigo-700 btn-enhanced text-readable-medium" disabled={isLoading || (!inputMessage.trim() && !attachedImage) }>
           <Send className="w-5 h-5 text-white" />
         </Button>
       </div>

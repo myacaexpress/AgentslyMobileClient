@@ -19,17 +19,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --glass-bg: rgba(0, 0, 0, 0.95);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --overlay-light: rgba(0, 0, 0, 0.9);
-    --overlay-dark: rgba(255, 255, 255, 0.7);
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
@@ -54,11 +43,6 @@ body {
   text-shadow: 0 0 3px rgba(255, 255, 255, 0.8), 0 1px 2px rgba(255, 255, 255, 0.6);
 }
 
-.text-contrast-high-dark {
-  color: #ffffff;
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8), 0 1px 2px rgba(0, 0, 0, 0.6);
-}
-
 /* Glass morphism effect for better readability */
 .glass-bg {
   background: var(--glass-bg);
@@ -72,13 +56,6 @@ body {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.glass-bg-dark {
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Enhanced overlay for text over images/backgrounds */
@@ -96,10 +73,6 @@ body {
   background: var(--overlay-light);
   border-radius: 8px;
   z-index: -1;
-}
-
-.text-overlay-dark::before {
-  background: var(--overlay-dark);
 }
 
 /* Enhanced button styles for better contrast */
@@ -186,8 +159,7 @@ body {
 /* Accessibility improvements */
 @media (prefers-reduced-motion: reduce) {
   .glass-bg,
-  .glass-bg-light,
-  .glass-bg-dark {
+  .glass-bg-light {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
@@ -202,8 +174,7 @@ body {
   }
   
   .glass-bg,
-  .glass-bg-light,
-  .glass-bg-dark {
+  .glass-bg-light {
     background: var(--background);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;

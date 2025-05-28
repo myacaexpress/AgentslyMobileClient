@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -32,9 +31,6 @@ export default function FollowUpListPage() {
     <div className="flex flex-col h-[calc(100vh-80px)]"> {/* Adjusted height for bottom nav */}
       <header className="flex justify-between items-center p-4 border-b bg-white sticky top-0 z-10">
         <h1 className="text-xl font-bold text-slate-800">Follow Up</h1>
-        <Avatar>
-          <AvatarFallback className="bg-slate-200 text-slate-700">{mockUser.initials}</AvatarFallback>
-        </Avatar>
       </header>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="p-4 flex flex-col flex-grow">

@@ -30,7 +30,7 @@ export default function BottomNav() {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-10 flex justify-around p-2 nav-enhanced max-w-md mx-auto">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 flex justify-around p-2 nav-enhanced max-w-md mx-auto bg-white border-t border-gray-200">
       {navItems.map(item => {
         const isActive = pathname === item.screenPath;
         const Icon = item.icon;

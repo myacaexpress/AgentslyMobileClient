@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, ReactNode } from 'react';
+import React, { useEffect, useState, ReactNode } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton'; // For loading state
@@ -15,7 +15,9 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (loading) return;
+    
+    if (!user) {
       // Allow access to login and signup pages even if not authenticated
       if (pathname !== '/login' && pathname !== '/signup') {
         router.push('/login');
@@ -23,8 +25,8 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     }
   }, [user, loading, router, pathname]);
 
+  // Show loading state while auth is being determined
   if (loading) {
-    // Show a full-page loading skeleton or a simpler loader
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4">
         <div className="space-y-4 w-full max-w-md">
@@ -44,6 +46,5 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   
   // This case should ideally be caught by the useEffect redirect,
   // but as a fallback, prevent rendering children if not user and not on auth pages.
-  // Or, if useEffect hasn't run yet, this prevents a flash of content.
   return null; 
 }

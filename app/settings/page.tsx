@@ -6,10 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAppContext } from '@/contexts/AppContext';
-// import { useAuth } from '@/contexts/AuthContext'; // For sign out button if needed
+import UserAvatar from '@/components/UserAvatar';
 
 export default function SettingsPage() { 
   const { 
@@ -21,14 +20,14 @@ export default function SettingsPage() {
     isLoading, // Assuming isLoading is for global loading state
     // setIsLoading 
   } = useAppContext();
-  // const { signOut } = useAuth(); // Example if you add a sign out button
 
   const [newRemarkText, setNewRemarkText] = useState('');
 
   const handleAddRemark = () => {
     if (newRemarkText.trim() === '') return;
-    // Ensure unique ID generation, Date.now() might not be sufficient if adding rapidly
-    const newRemark = { id: `qcr_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`, text: newRemarkText, icon: Zap as LucideIcon };
+    // Use a simple counter-based approach to avoid hydration issues
+    const timestamp = Date.now();
+    const newRemark = { id: `qcr_${timestamp}`, text: newRemarkText, icon: Zap as LucideIcon };
     setQuickCallRemarks(prev => [...prev, newRemark]);
     setNewRemarkText('');
   };
@@ -45,13 +44,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-80px)]"> {/* Adjusted height for bottom nav */}
-      <header className="flex justify-between items-center p-4 border-b bg-white sticky top-0 z-10">
-        <h1 className="text-xl font-bold text-slate-800">Settings</h1>
-        <Avatar>
-          <AvatarFallback className="bg-slate-200 text-slate-700">{mockUser.initials}</AvatarFallback>
-        </Avatar>
-      </header>
+    <div className="flex flex-col h-[calc(100vh-140px)]"> {/* Adjusted height for global header and bottom nav */}
       <ScrollArea className="flex-grow p-4 space-y-6 bg-gray-50">
         <Card className="bg-white">
           <CardHeader>
@@ -146,16 +139,6 @@ export default function SettingsPage() {
         <div className="pt-4 pb-8 flex justify-end"> {/* Added padding bottom for spacing from nav */}
             <Button onClick={handleSaveSettings} className="bg-indigo-600 hover:bg-indigo-700" disabled={isLoading}>Save Settings</Button>
         </div>
-        {/* Example Sign Out Button
-        <div className="pt-4 pb-8 flex justify-center">
-            <Button variant="outline" onClick={async () => {
-                if(setIsLoading) setIsLoading(true);
-                await signOut();
-                // navigateTo will be handled by AuthContext listener or redirect logic
-                if(setIsLoading) setIsLoading(false);
-            }} disabled={isLoading}>Sign Out</Button>
-        </div>
-        */}
       </ScrollArea>
     </div>
   );

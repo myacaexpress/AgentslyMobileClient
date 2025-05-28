@@ -1,16 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { MessageSquare, ChevronRight, Paperclip, Send, UserRoundPlus, FileImage, XCircle } from 'lucide-react';
+import { MessageSquare, ChevronRight, Paperclip, Send, XCircle } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"; // Assuming DialogContent is part of Dialog
 import { useAppContext } from '@/contexts/AppContext';
-import { useAuth } from '@/contexts/AuthContext'; // For potential user info display
+import UserAvatar from '@/components/UserAvatar';
 
 interface ChatMessage {
   id: string;
@@ -45,8 +43,6 @@ export default function AskPage() {
     { id: '1', sender: 'ai', text: `Hello, ${mockUser.name}. What can I help you with today?`, timestamp: new Date() }
   ]);
   const [attachedImage, setAttachedImage] = useState<string | null>(null);
-  const [imageForProcessing, setImageForProcessing] = useState<string | null>(null);
-  const [showImageActionModal, setShowImageActionModal] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -162,68 +158,22 @@ export default function AskPage() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImageForProcessing(reader.result as string); 
-        setShowImageActionModal(true); 
+        setAttachedImage(reader.result as string);
+        setChatMessages(prev => [...prev, {
+          id: Date.now().toString(), 
+          sender: 'system', 
+          text: "Image attached. Type your message and send.", 
+          timestamp: new Date()
+        }]);
       };
       reader.readAsDataURL(file);
     }
     if(fileInputRef.current) fileInputRef.current.value = ""; 
   };
 
-  const handleExtractContactFromImage = async () => {
-    setShowImageActionModal(false);
-    if (!imageForProcessing || isLoading) return;
-    setIsLoading(true);
-    setChatMessages(prev => [...prev, {
-        id: Date.now().toString(), sender: 'user', text: "Extracting contact from image...", image: imageForProcessing, timestamp: new Date()
-    }]);
-
-    const contactSchema = {
-        type: "OBJECT",
-        properties: {
-            "name": { "type": "STRING", "description": "Full name of the contact." },
-            "phone": { "type": "STRING", "description": "Primary phone number." },
-            "email": { "type": "STRING", "description": "Email address." },
-            "company": { "type": "STRING", "description": "Company name, if any." },
-            "notes": { "type": "STRING", "description": "Any other relevant notes or details from the image." }
-        },
-        // required: ["name"] // Example: make name required
-    };
-    const prompt = "Analyze the attached image. It might contain handwritten or printed contact information. Extract the Name, Phone Number, Email Address, Company Name, and any other relevant notes. If a field is not found, return an empty string for it. Ensure the response is a valid JSON object matching the provided schema structure.";
-    
-    const responseText = await callGeminiAPI(prompt, imageForProcessing, contactSchema);
-    try {
-        const extractedData = JSON.parse(responseText);
-        setContactConfirmationData({ image: imageForProcessing, extractedData });
-        navigateTo('/confirm-contact');
-    } catch (e) {
-        console.error("Error parsing contact extraction JSON:", e, responseText);
-        setChatMessages(prev => [...prev, {
-            id: Date.now().toString(), sender: 'ai', text: "Sorry, I couldn't extract contact details clearly from that image. Please try again or enter manually.", timestamp: new Date()
-        }]);
-    }
-    setImageForProcessing(null);
-    setIsLoading(false);
-  };
-
-  const handleAttachImageToMessage = () => {
-    setAttachedImage(imageForProcessing); 
-    setImageForProcessing(null);
-    setShowImageActionModal(false);
-    setChatMessages(prev => [...prev, {
-        id: Date.now().toString(), sender: 'system', text: "Image attached. Type your message and send.", timestamp: new Date()
-    }]);
-  };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-80px)] p-4"> {/* Adjusted height for bottom nav */}
-      <header className="flex justify-between items-center mb-4 header-enhanced rounded-lg p-3">
-        <h1 className="text-xl font-bold text-slate-800 text-readable-medium">AGENTSLY.AI</h1>
-        <Avatar>
-          <AvatarFallback className="bg-slate-200 text-slate-700 text-readable">{mockUser.initials}</AvatarFallback>
-        </Avatar>
-      </header>
-
+    <div className="flex flex-col h-[calc(100vh-140px)] p-4"> {/* Adjusted height for global header and bottom nav */}
       <ScrollArea className="flex-grow mb-4 space-y-4">
         {chatMessages.map(msg => {
           if (msg.type === 'skeleton_loader') { 
@@ -293,24 +243,6 @@ export default function AskPage() {
           </div>
       )}
 
-      <Dialog open={showImageActionModal} onOpenChange={setShowImageActionModal}>
-        <DialogHeader>
-          <DialogTitle>Image Action</DialogTitle>
-          <DialogDescription>What would you like to do with the selected image?</DialogDescription>
-        </DialogHeader>
-        {imageForProcessing && <img src={imageForProcessing} alt="Preview for action" className="rounded-md mb-4 max-h-40 mx-auto" />}
-        <div className="space-y-2">
-            <Button onClick={handleExtractContactFromImage} className="w-full bg-blue-500 hover:bg-blue-600">
-                <UserRoundPlus className="w-4 h-4 mr-2" /> Extract New Contact
-            </Button>
-            <Button onClick={handleAttachImageToMessage} className="w-full">
-                <FileImage className="w-4 h-4 mr-2" /> Attach to Chat Message
-            </Button>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => {setShowImageActionModal(false); setImageForProcessing(null);}}>Cancel</Button>
-        </DialogFooter>
-      </Dialog>
 
       <div className="flex items-center space-x-2 border-t pt-4">
         <Button variant="ghost" size="icon" onClick={() => fileInputRef.current && fileInputRef.current.click()} disabled={isLoading}>
@@ -330,7 +262,7 @@ export default function AskPage() {
           <Send className="w-5 h-5 text-white" />
         </Button>
       </div>
-      {attachedImage && !imageForProcessing && (
+      {attachedImage && (
         <div className="mt-2 p-2 border rounded-md bg-gray-50 flex items-center justify-between">
           <img src={attachedImage} alt="Preview for message" className="max-h-16 rounded-md inline-block"/>
           <Button variant="ghost" size="sm" onClick={() => setAttachedImage(null)} disabled={isLoading}>

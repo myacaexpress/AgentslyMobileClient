@@ -86,7 +86,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 const mockUserInitial: MockUser = {
   name: "Shawn",
-  initials: "RV",
+  initials: "S",
 };
 
 const initialQuickCallRemarksData: QuickCallRemark[] = [
@@ -96,11 +96,14 @@ const initialQuickCallRemarksData: QuickCallRemark[] = [
   { id: 'qcr4', text: 'Needs Escalation', icon: AlertTriangle },
 ];
 
+// Use static timestamps to prevent hydration mismatches
+const baseTime = 1640995200000; // Fixed timestamp: Jan 1, 2022
+
 const mockContactsInitialData: Contact[] = [
-  { id: '1', name: 'Shawn Milner', phone: '(305) 555-0021', email: 'shawnmilner8@gmail.com', company: 'ACA Health', status: 'Unconfirmed employment status', callBefore: '8:00pm', urgency: 'urgent', notes: "Just completed ACA certification. Looking for first full-time role. Big NBA fan (talks about Lakers). Spouse's name is missing. Part of address is missing.", preCallScript: "Hi! Just a quick follow-up - it looks like we're missing your spouse's name and part of your address. I just need a moment to confirm those so we can update your info", history: [], isResolved: false, lastInteraction: Date.now() - 100000 },
-  { id: '2', name: 'Rovic Villaralvo', phone: '(305) 555-0021', email: 'rovic@example.com', company: 'Tech Solutions', status: 'Unconfirmed employment status', callBefore: '5:00pm', urgency: 'urgent', notes: 'Missing spouse name and incomplete address. Previous conversation about new software update.', preCallScript: "Hello Rovic, following up on our previous conversation regarding the new software update.", history: [], isResolved: true, lastInteraction: Date.now() - 200000 },
-  { id: '3', name: 'Alex Johnson', phone: '(404) 123-4567', email: 'alex@example.com', company: 'Innovate Corp', status: 'Needs proposal', callBefore: '6:00pm', urgency: 'normal', notes: 'Interested in premium package. Discussed budget constraints last call. Needs a clear breakdown of ROI.', preCallScript: "Hi Alex, I have the proposal ready for you, focusing on the ROI we discussed.", history: [], isResolved: false, lastInteraction: Date.now() - 50000 },
-  { id: '4', name: 'Maria Garcia', phone: '(786) 987-6543', email: 'maria@example.com', company: 'HealthFirst', status: 'Follow up in 2 weeks', callBefore: 'N/A', urgency: 'low', notes: 'Sent initial info pack. Expressed interest in family plans. Mentioned her daughter starts college soon.', preCallScript: "Hi Maria, just checking in as scheduled. How are things going? I recall you mentioning your daughter's college plans - any updates on the family plans we discussed?", history: [], isResolved: false, lastInteraction: Date.now() - 300000 },
+  { id: '1', name: 'Shawn Milner', phone: '(305) 555-0021', email: 'shawnmilner8@gmail.com', company: 'ACA Health', status: 'Unconfirmed employment status', callBefore: '8:00pm', urgency: 'urgent', notes: "Just completed ACA certification. Looking for first full-time role. Big NBA fan (talks about Lakers). Spouse's name is missing. Part of address is missing.", preCallScript: "Hi! Just a quick follow-up - it looks like we're missing your spouse's name and part of your address. I just need a moment to confirm those so we can update your info", history: [], isResolved: false, lastInteraction: baseTime + 300000 },
+  { id: '2', name: 'Rovic Villaralvo', phone: '(305) 555-0021', email: 'rovic@example.com', company: 'Tech Solutions', status: 'Unconfirmed employment status', callBefore: '5:00pm', urgency: 'urgent', notes: 'Missing spouse name and incomplete address. Previous conversation about new software update.', preCallScript: "Hello Rovic, following up on our previous conversation regarding the new software update.", history: [], isResolved: true, lastInteraction: baseTime + 200000 },
+  { id: '3', name: 'Alex Johnson', phone: '(404) 123-4567', email: 'alex@example.com', company: 'Innovate Corp', status: 'Needs proposal', callBefore: '6:00pm', urgency: 'normal', notes: 'Interested in premium package. Discussed budget constraints last call. Needs a clear breakdown of ROI.', preCallScript: "Hi Alex, I have the proposal ready for you, focusing on the ROI we discussed.", history: [], isResolved: false, lastInteraction: baseTime + 350000 },
+  { id: '4', name: 'Maria Garcia', phone: '(786) 987-6543', email: 'maria@example.com', company: 'HealthFirst', status: 'Follow up in 2 weeks', callBefore: 'N/A', urgency: 'low', notes: 'Sent initial info pack. Expressed interest in family plans. Mentioned her daughter starts college soon.', preCallScript: "Hi Maria, just checking in as scheduled. How are things going? I recall you mentioning your daughter's college plans - any updates on the family plans we discussed?", history: [], isResolved: false, lastInteraction: baseTime + 100000 },
 ];
 
 
@@ -139,34 +142,38 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addContact = (newContactData: Omit<Contact, 'id' | 'isResolved' | 'history'>): string => {
-    const newId = `contact_${Date.now()}`;
+    const timestamp = Date.now();
+    const newId = `contact_${timestamp}`;
     const newContact: Contact = {
       ...newContactData,
       id: newId,
       isResolved: false,
       history: [],
-      lastInteraction: Date.now(),
+      lastInteraction: timestamp,
     };
     setContacts(prevContacts => [newContact, ...prevContacts]);
     return newId;
   };
 
   const updateContactData = (contactId: string, updates: Partial<Contact>) => {
+    const timestamp = Date.now();
     setContacts(prevContacts =>
       prevContacts.map(c =>
-        c.id === contactId ? { ...c, ...updates, lastInteraction: Date.now() } : c
+        c.id === contactId ? { ...c, ...updates, lastInteraction: timestamp } : c
       )
     );
   };
 
   const startCall = (contact: Contact) => {
-    setCallDetails({ contactName: contact.name, callStartTime: Date.now() });
+    const timestamp = Date.now();
+    setCallDetails({ contactName: contact.name, callStartTime: timestamp });
     navigateTo(`/call/${contact.id}`, { contactId: contact.id });
   };
 
   const endCall = (durationSeconds: number) => {
+    const timestamp = Date.now();
     const duration = `${Math.floor(durationSeconds / 60)} min ${durationSeconds % 60} sec`;
-    setCallDetails(prev => prev ? ({ ...prev, callDuration: duration, callEndTime: Date.now() }) : null);
+    setCallDetails(prev => prev ? ({ ...prev, callDuration: duration, callEndTime: timestamp }) : null);
     if (selectedContactId) {
       navigateTo(`/post-call/${selectedContactId}`, { contactId: selectedContactId });
     } else {
